@@ -1,0 +1,473 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FerrisHub - Rust & Vue Neo-Grotesk Bento Grid</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <script src="https://unpkg.com/vue@3/dist/vue.global.prod.js"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            grotesk: ['"Space Grotesk"', 'sans-serif'],
+            mono: ['"JetBrains Mono"', 'monospace'],
+          },
+          colors: {
+            ferris: {
+              orange: '#f74c00',
+              vue: '#42b883',
+              dark: '#0e0f12',
+              card: '#16181d',
+              border: '#262933',
+              muted: '#717684'
+            }
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    body {
+      background-color: #0b0c0e;
+      color: #f1f3f7;
+      font-family: 'Space Grotesk', sans-serif;
+    }
+    .neo-border {
+      border: 1px solid #232732;
+      box-shadow: 0 4px 20px -2px rgba(0,0,0,0.5);
+    }
+    .neo-border:hover {
+      border-color: #383e50;
+    }
+    .glass-card {
+      background: radial-gradient(circle at 100% 0%, rgba(247, 76, 0, 0.05), transparent 40%),
+                  radial-gradient(circle at 0% 100%, rgba(66, 184, 131, 0.05), transparent 40%),
+                  #13151a;
+    }
+  </style>
+</head>
+<body class="min-h-screen selection:bg-orange-500 selection:text-white">
+  <div id="app" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    
+    <!-- Header Bar -->
+    <header class="flex flex-col md:flex-row md:items-center justify-between pb-8 mb-8 border-b border-ferris-border gap-4">
+      <div class="flex items-center space-x-4">
+        <div class="w-12 h-12 rounded-xl bg-orange-600/10 border border-orange-500/30 flex items-center justify-center text-2xl font-bold text-orange-500">
+          🦀
+        </div>
+        <div>
+          <div class="flex items-center space-x-2">
+            <h1 class="text-2xl font-bold tracking-tight text-white uppercase">FerrisHub</h1>
+            <span class="px-2 py-0.5 text-xs font-mono font-medium rounded bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">LIVE RUST ENGINE</span>
+            <span class="px-2 py-0.5 text-xs font-mono font-medium rounded bg-blue-500/10 text-blue-400 border border-blue-500/20">HERD INTEGRATED</span>
+          </div>
+          <p class="text-xs text-ferris-muted font-mono mt-0.5">Rust Axum + Vue 3 Neo-Grotesk Bento Architecture</p>
+        </div>
+      </div>
+
+      <!-- Right Toolbar / Auth Status -->
+      <div class="flex items-center space-x-3">
+        <div v-if="auth.token" class="flex items-center space-x-3 bg-ferris-card px-4 py-2 rounded-xl neo-border">
+          <div class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></div>
+          <div class="text-xs">
+            <div class="font-bold text-white">{{ auth.user.name }}</div>
+            <div class="text-[10px] text-ferris-muted font-mono">{{ auth.user.role }}</div>
+          </div>
+          <button @click="logout" class="ml-2 text-xs font-mono px-2 py-1 rounded bg-red-500/10 text-red-400 hover:bg-red-500/20 transition">Logout</button>
+        </div>
+        <div v-else class="flex items-center space-x-2">
+          <button @click="openLoginModal = true" class="px-4 py-2 rounded-xl bg-orange-600 hover:bg-orange-500 text-white font-medium text-xs tracking-wider transition uppercase font-mono shadow-lg shadow-orange-600/20">
+            Sign In JWT
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <!-- Stat Ribbon -->
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+      <div class="glass-card neo-border rounded-2xl p-4">
+        <span class="text-[11px] font-mono text-ferris-muted uppercase tracking-wider">Backend Gateway</span>
+        <div class="text-xl font-bold text-white mt-1">Rust Axum 0.7</div>
+        <div class="text-xs text-orange-400 font-mono mt-1">Native Multi-threaded</div>
+      </div>
+      <div class="glass-card neo-border rounded-2xl p-4">
+        <span class="text-[11px] font-mono text-ferris-muted uppercase tracking-wider">Frontend Engine</span>
+        <div class="text-xl font-bold text-white mt-1">Vue 3 Reactivity</div>
+        <div class="text-xs text-emerald-400 font-mono mt-1">TanStack Query Style</div>
+      </div>
+      <div class="glass-card neo-border rounded-2xl p-4">
+        <span class="text-[11px] font-mono text-ferris-muted uppercase tracking-wider">Local Herd Domain</span>
+        <div class="text-xl font-bold text-white mt-1">ferris-hub.test</div>
+        <div class="text-xs text-blue-400 font-mono mt-1">Herd Reverse Proxy</div>
+      </div>
+      <div class="glass-card neo-border rounded-2xl p-4">
+        <span class="text-[11px] font-mono text-ferris-muted uppercase tracking-wider">FlyEnv DB Target</span>
+        <div class="text-xl font-bold text-white mt-1">MySQL 3306</div>
+        <div class="text-xs text-purple-400 font-mono mt-1">FlyEnv Ready</div>
+      </div>
+    </div>
+
+    <!-- Main Bento Grid -->
+    <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-4 auto-rows-[160px]">
+      
+      <!-- Bento Item 1: System Health (2 cols, 1 row) -->
+      <div class="col-span-1 md:col-span-2 row-span-1 glass-card neo-border rounded-3xl p-6 flex flex-col justify-between group hover:border-orange-500/50 transition">
+        <div class="flex justify-between items-start">
+          <div class="flex items-center space-x-2">
+            <span class="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-ping"></span>
+            <span class="text-xs font-mono font-semibold uppercase text-ferris-muted tracking-widest">Rust Engine Latency</span>
+          </div>
+          <span class="text-xs font-mono px-2 py-0.5 rounded bg-orange-500/10 text-orange-400 border border-orange-500/20">CORE ENGINE</span>
+        </div>
+        <div class="flex items-end justify-between">
+          <div>
+            <div class="text-3xl font-extrabold tracking-tight text-white font-mono">{{ health.latency || '0.18ms' }}</div>
+            <div class="text-xs text-ferris-muted font-mono mt-0.5">{{ health.service || 'Connecting to Axum...' }}</div>
+          </div>
+          <button @click="refetchHealth" class="px-3 py-1.5 text-xs font-mono rounded-lg bg-ferris-border hover:bg-neutral-800 text-neutral-300 transition">
+            Ping Now
+          </button>
+        </div>
+      </div>
+
+      <!-- Bento Item 2: Quick Action / Add Module (1 col, 1 row) -->
+      <div class="col-span-1 row-span-1 glass-card neo-border rounded-3xl p-6 flex flex-col justify-between hover:border-emerald-500/50 transition">
+        <div class="flex justify-between items-start">
+          <span class="text-xs font-mono font-semibold uppercase text-ferris-muted tracking-widest">Add Microservice</span>
+          <span class="text-lg">⚡</span>
+        </div>
+        <div>
+          <button @click="openCreateModal = true" class="w-full py-2.5 rounded-xl bg-white text-black font-semibold text-xs uppercase tracking-wider hover:bg-neutral-200 transition">
+            + New Service
+          </button>
+        </div>
+      </div>
+
+      <!-- Bento Item 3: Auth Security Node (1 col, 1 row) -->
+      <div class="col-span-1 row-span-1 glass-card neo-border rounded-3xl p-6 flex flex-col justify-between hover:border-purple-500/50 transition">
+        <div class="flex justify-between items-start">
+          <span class="text-xs font-mono font-semibold uppercase text-ferris-muted tracking-widest">Auth Guard</span>
+          <span class="text-xs font-mono text-purple-400">HS256</span>
+        </div>
+        <div>
+          <div class="text-sm font-bold text-white">{{ auth.token ? 'JWT Active' : 'Public Guest' }}</div>
+          <div class="text-xs text-ferris-muted font-mono truncate mt-0.5">{{ auth.token ? 'Claims signed via Rust' : 'Sign in for write actions' }}</div>
+        </div>
+      </div>
+
+      <!-- Dynamic Bento Items from Rust API -->
+      <div v-for="item in projects" :key="item.id" 
+           :class="[
+             'glass-card neo-border rounded-3xl p-6 flex flex-col justify-between hover:border-neutral-500/50 transition relative overflow-hidden group',
+             item.col_span === 2 ? 'col-span-1 md:col-span-2' : 'col-span-1',
+             item.row_span === 2 ? 'row-span-2' : 'row-span-1'
+           ]">
+        <div class="flex justify-between items-start">
+          <div>
+            <span class="text-[10px] font-mono uppercase tracking-widest text-ferris-muted">{{ item.category }}</span>
+            <h3 class="text-lg font-bold text-white mt-1">{{ item.title }}</h3>
+          </div>
+          <div class="flex items-center space-x-2">
+            <span :class="[
+              'px-2 py-0.5 rounded text-[10px] font-mono uppercase font-semibold border',
+              item.status === 'active' ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20' :
+              item.status === 'verified' ? 'bg-purple-500/10 text-purple-400 border-purple-500/20' :
+              'bg-neutral-800 text-neutral-300 border-neutral-700'
+            ]">{{ item.status }}</span>
+            <button v-if="auth.token" @click="deleteItem(item.id)" class="opacity-0 group-hover:opacity-100 text-xs text-red-400 hover:text-red-300 transition">✕</button>
+          </div>
+        </div>
+
+        <div class="mt-4 flex items-end justify-between">
+          <div>
+            <div class="text-xs font-mono text-orange-400">{{ item.metrics }}</div>
+            <div class="text-[10px] font-mono text-ferris-muted mt-0.5">Updated: {{ item.updated_at }}</div>
+          </div>
+          <div class="w-8 h-8 rounded-full bg-white/5 flex items-center justify-center text-xs font-mono text-neutral-400 group-hover:text-white transition">
+            →
+          </div>
+        </div>
+      </div>
+
+      <!-- Bento Item: Live Rust Logs (col-span-2, row-span-2) -->
+      <div class="col-span-1 md:col-span-2 row-span-2 glass-card neo-border rounded-3xl p-6 flex flex-col justify-between">
+        <div>
+          <div class="flex justify-between items-center pb-3 border-b border-ferris-border">
+            <div class="flex items-center space-x-2">
+              <span class="w-2 h-2 rounded-full bg-orange-500"></span>
+              <span class="text-xs font-mono font-semibold uppercase text-white tracking-widest">Axum Event Stream</span>
+            </div>
+            <span class="text-[10px] font-mono text-ferris-muted">Auto-polled 5s</span>
+          </div>
+
+          <div class="mt-4 space-y-2 overflow-y-auto max-h-[220px] pr-2 font-mono text-xs">
+            <div v-for="log in logs" :key="log.id" class="p-2.5 rounded-xl bg-neutral-900/60 border border-neutral-800/80 flex items-center justify-between">
+              <div class="flex items-center space-x-2">
+                <span class="text-[10px] px-1.5 py-0.5 rounded bg-orange-950 text-orange-400 border border-orange-800/50">{{ log.action }}</span>
+                <span class="text-neutral-300 text-xs">{{ log.detail }}</span>
+              </div>
+              <span class="text-[10px] text-ferris-muted">{{ log.time }}</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="pt-4 border-t border-ferris-border flex justify-between items-center text-xs font-mono text-ferris-muted">
+          <span>State In-Memory Mutex Arc</span>
+          <span class="text-emerald-400">Zero Race Condition</span>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Login Modal -->
+    <div v-if="openLoginModal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+      <div class="bg-ferris-card neo-border rounded-3xl p-6 max-w-sm w-full space-y-4">
+        <div class="flex justify-between items-center">
+          <h3 class="text-lg font-bold text-white">Sign In with JWT</h3>
+          <button @click="openLoginModal = false" class="text-neutral-400 hover:text-white">✕</button>
+        </div>
+        <p class="text-xs text-ferris-muted">Gunakan credential default:</p>
+        <div class="p-2 rounded bg-neutral-900 text-[11px] font-mono text-neutral-300">
+          Username: <span class="text-orange-400 font-bold">admin</span> | Password: <span class="text-orange-400 font-bold">ferris123</span>
+        </div>
+        <form @submit.prevent="handleLogin" class="space-y-3 font-mono text-xs">
+          <div>
+            <label class="block text-ferris-muted mb-1">Username</label>
+            <input v-model="loginForm.username" type="text" class="w-full px-3 py-2 rounded-xl bg-neutral-900 border border-neutral-800 text-white focus:outline-none focus:border-orange-500" required>
+          </div>
+          <div>
+            <label class="block text-ferris-muted mb-1">Password</label>
+            <input v-model="loginForm.password" type="password" class="w-full px-3 py-2 rounded-xl bg-neutral-900 border border-neutral-800 text-white focus:outline-none focus:border-orange-500" required>
+          </div>
+          <button type="submit" class="w-full py-2.5 rounded-xl bg-orange-600 hover:bg-orange-500 text-white font-semibold transition uppercase tracking-wider">
+            Authorize Token
+          </button>
+        </form>
+      </div>
+    </div>
+
+    <!-- Create Modal -->
+    <div v-if="openCreateModal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+      <div class="bg-ferris-card neo-border rounded-3xl p-6 max-w-md w-full space-y-4">
+        <div class="flex justify-between items-center">
+          <h3 class="text-lg font-bold text-white">New Service Node</h3>
+          <button @click="openCreateModal = false" class="text-neutral-400 hover:text-white">✕</button>
+        </div>
+        <form @submit.prevent="handleCreate" class="space-y-3 font-mono text-xs">
+          <div>
+            <label class="block text-ferris-muted mb-1">Service Title</label>
+            <input v-model="createForm.title" type="text" placeholder="e.g. Redis Cache Layer" class="w-full px-3 py-2 rounded-xl bg-neutral-900 border border-neutral-800 text-white focus:outline-none focus:border-orange-500" required>
+          </div>
+          <div class="grid grid-cols-2 gap-2">
+            <div>
+              <label class="block text-ferris-muted mb-1">Category</label>
+              <input v-model="createForm.category" type="text" placeholder="Infrastructure" class="w-full px-3 py-2 rounded-xl bg-neutral-900 border border-neutral-800 text-white focus:outline-none focus:border-orange-500" required>
+            </div>
+            <div>
+              <label class="block text-ferris-muted mb-1">Status</label>
+              <select v-model="createForm.status" class="w-full px-3 py-2 rounded-xl bg-neutral-900 border border-neutral-800 text-white focus:outline-none focus:border-orange-500">
+                <option value="active">active</option>
+                <option value="verified">verified</option>
+                <option value="standby">standby</option>
+              </select>
+            </div>
+          </div>
+          <div>
+            <label class="block text-ferris-muted mb-1">Metrics Info</label>
+            <input v-model="createForm.metrics" type="text" placeholder="10ms / 500 req/s" class="w-full px-3 py-2 rounded-xl bg-neutral-900 border border-neutral-800 text-white focus:outline-none focus:border-orange-500">
+          </div>
+          <div class="grid grid-cols-2 gap-2">
+            <div>
+              <label class="block text-ferris-muted mb-1">Grid Width (1 or 2)</label>
+              <input v-model.number="createForm.col_span" type="number" min="1" max="2" class="w-full px-3 py-2 rounded-xl bg-neutral-900 border border-neutral-800 text-white focus:outline-none focus:border-orange-500">
+            </div>
+            <div>
+              <label class="block text-ferris-muted mb-1">Grid Height (1 or 2)</label>
+              <input v-model.number="createForm.row_span" type="number" min="1" max="2" class="w-full px-3 py-2 rounded-xl bg-neutral-900 border border-neutral-800 text-white focus:outline-none focus:border-orange-500">
+            </div>
+          </div>
+          <button type="submit" class="w-full py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-semibold transition uppercase tracking-wider">
+            Broadcast Node
+          </button>
+        </form>
+      </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="mt-16 pt-8 border-t border-ferris-border flex flex-col md:flex-row justify-between items-center text-xs font-mono text-ferris-muted gap-4">
+      <div>FerrisHub v0.1.0 • Neo-Grotesk Bento Architecture</div>
+      <div class="flex space-x-4">
+        <span>Rust 1.99</span>
+        <span>Vue 3</span>
+        <span>Laravel Herd Proxy</span>
+        <span>FlyEnv DB Ready</span>
+      </div>
+    </footer>
+  </div>
+
+  <script>
+    const { createApp, ref, reactive, onMounted } = Vue;
+
+    createApp({
+      setup() {
+        const API_BASE = 'http://127.0.0.1:8088/api';
+        
+        const health = ref({ latency: '0.18ms', service: 'Rust Axum Engine' });
+        const projects = ref([]);
+        const logs = ref([]);
+        const openLoginModal = ref(false);
+        const openCreateModal = ref(false);
+
+        const auth = reactive({
+          token: localStorage.getItem('ferris_token') || '',
+          user: JSON.parse(localStorage.getItem('ferris_user') || 'null') || {}
+        });
+
+        const loginForm = reactive({ username: 'admin', password: 'ferris123' });
+        const createForm = reactive({
+          title: '',
+          category: 'Microservice',
+          status: 'active',
+          metrics: '99.9% uptime',
+          col_span: 1,
+          row_span: 1
+        });
+
+        const fetchHealth = async () => {
+          const start = performance.now();
+          try {
+            const res = await fetch(`${API_BASE}/health`);
+            const data = await res.json();
+            const took = (performance.now() - start).toFixed(2);
+            health.value = {
+              latency: `${took}ms`,
+              service: `${data.service} (${data.framework})`
+            };
+          } catch (e) {
+            health.value = { latency: 'ERR', service: 'Rust API Offline' };
+          }
+        };
+
+        const fetchProjects = async () => {
+          try {
+            const res = await fetch(`${API_BASE}/projects`);
+            projects.value = await res.json();
+          } catch (e) {
+            console.error(e);
+          }
+        };
+
+        const fetchLogs = async () => {
+          try {
+            const res = await fetch(`${API_BASE}/logs`);
+            logs.value = await res.json();
+          } catch (e) {
+            console.error(e);
+          }
+        };
+
+        const handleLogin = async () => {
+          try {
+            const res = await fetch(`${API_BASE}/auth/login`, {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify(loginForm)
+            });
+            if (!res.ok) throw new Error('Invalid credentials');
+            const data = await res.json();
+            auth.token = data.token;
+            auth.user = data.user;
+            localStorage.setItem('ferris_token', data.token);
+            localStorage.setItem('ferris_user', JSON.stringify(data.user));
+            openLoginModal.value = false;
+            fetchLogs();
+          } catch (err) {
+            alert('Login failed: ' + err.message);
+          }
+        };
+
+        const logout = () => {
+          auth.token = '';
+          auth.user = {};
+          localStorage.removeItem('ferris_token');
+          localStorage.removeItem('ferris_user');
+        };
+
+        const handleCreate = async () => {
+          if (!auth.token) {
+            alert('Harap login JWT terlebih dahulu');
+            openLoginModal.value = true;
+            return;
+          }
+          try {
+            const res = await fetch(`${API_BASE}/projects`, {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${auth.token}`
+              },
+              body: JSON.stringify(createForm)
+            });
+            if (!res.ok) throw new Error('Create failed');
+            openCreateModal.value = false;
+            createForm.title = '';
+            await fetchProjects();
+            await fetchLogs();
+          } catch (err) {
+            alert('Error: ' + err.message);
+          }
+        };
+
+        const deleteItem = async (id) => {
+          if (!auth.token) {
+            alert('Harap login JWT');
+            return;
+          }
+          try {
+            const res = await fetch(`${API_BASE}/projects/${id}`, {
+              method: 'DELETE',
+              headers: {
+                'Authorization': `Bearer ${auth.token}`
+              }
+            });
+            if (res.ok) {
+              await fetchProjects();
+              await fetchLogs();
+            }
+          } catch (e) {
+            console.error(e);
+          }
+        };
+
+        onMounted(() => {
+          fetchHealth();
+          fetchProjects();
+          fetchLogs();
+          setInterval(fetchLogs, 5000);
+        });
+
+        return {
+          health,
+          projects,
+          logs,
+          auth,
+          openLoginModal,
+          openCreateModal,
+          loginForm,
+          createForm,
+          refetchHealth: fetchHealth,
+          handleLogin,
+          logout,
+          handleCreate,
+          deleteItem
+        };
+      }
+    }).mount('#app');
+  </script>
+</body>
+</html>
